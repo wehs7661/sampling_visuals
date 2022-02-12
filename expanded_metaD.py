@@ -9,6 +9,7 @@ import numpy as np
 import os
 import imageio
 import natsort
+from tqdm.auto import tqdm
 
 def FES(coef, x):
     y = 0
@@ -40,6 +41,7 @@ def bias_total(x, mu_list, sigma):
     return total
 
 if __name__ == '__main__':
+    np.random.seed(1)
 
     os.mkdir('images_EXE_metaD')
 
@@ -87,7 +89,7 @@ if __name__ == '__main__':
     mu = 1.44908           # also the initial center of the biasing Gaussian
     yy = 0
     zz = FES(coef_start, xx)
-    n_trial = 400
+    n_trial = 200
     N_x = 10               # the number of step in k direction
     N_k = 1                # the number of step in x direction
     x_counter = 0          # a counter for MC steps in x direction
@@ -102,7 +104,7 @@ if __name__ == '__main__':
     """
     
     # Expanded ensemble simulation + Metadynamics!
-    for i in range(n_trial):
+    for i in tqdm(range(n_trial)):
         if x_counter < N_x:
             # Metropolis-Hasting algorithm in the x dirction 
             mu_list[i] = mu
@@ -189,11 +191,11 @@ if __name__ == '__main__':
         ax.view_init(elev=30, azim=-60)
         ax.set_xlabel('Collective variable', fontsize='10', fontweight='bold')
         ax.set_xlim3d(0, 12)
-        ax.set_ylabel('Coupling parameter $ \lambda $', fontsize='10', fontweight='bold')
+        ax.set_ylabel('Alchemical metadynamics $ \lambda $', fontsize='10', fontweight='bold')
         ax.set_ylim3d(0, 1)
         ax.set_zlabel('Free energy ($ k_{B} T$)', fontsize='10', fontweight='bold')
         ax.set_zlim3d(-10, 30)
-        plt.title('Expanded ensemble metadynamics', fontsize='12', fontweight='bold')
+        plt.title('Alchemical metadynamics', fontsize='12', fontweight='bold')
         plt.tight_layout()
 
         # Add a color bar which maps values to colors.

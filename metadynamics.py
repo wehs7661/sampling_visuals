@@ -3,8 +3,8 @@ import os
 import imageio
 import natsort
 import matplotlib.pyplot as plt
-import matplotlib.animation as anim
 from matplotlib import rc
+from tqdm.auto import tqdm
 
 
 def FES(x):
@@ -131,6 +131,8 @@ def bias_total(x, mu_list, sigma):
 
 
 if __name__ == '__main__':
+    # fix the random seed
+    np.random.seed(1)
 
     os.mkdir('images_metaD')
 
@@ -142,11 +144,11 @@ if __name__ == '__main__':
     x = 1.44908    # initial position to start (y = 2.1678, minmium of FES)
     mu = 1.44908   # also the initial center of the biasing gaussian
     y = FES(x)
-    n_trial = 50
+    n_trial = 500
     max_d = 0.8   # max displacement
     sigma = 0.4   # related to the width of the gaussian
     mu_list = np.zeros(n_trial)  # document the center of guassians added
-    for i in range(n_trial):
+    for i in tqdm(range(n_trial)):
         mu_list[i] = mu
         delta_x = (2 * np.random.rand(1) - 1) * \
             max_d  # -1 <= delta_x/max_d <= 1
@@ -182,7 +184,7 @@ if __name__ == '__main__':
 
         # Data for plotting biased FES (first calculate total amount of biases added)
         #print(mu_list[:i])
-        print(bias_total(CV, mu_list[:i], sigma))
+        #print(bias_total(CV, mu_list[:i], sigma))
         
         fes_biased = FES(CV) + bias_total(CV, mu_list[:i], sigma)
 
@@ -228,6 +230,6 @@ if __name__ == '__main__':
             file_path = os.path.join('./images_metaD', filename)
             images.append(imageio.imread(file_path))
     # duration: time for each frame
-    imageio.mimsave('./metadynamics_redo2.gif', images, duration=0.05)
+    imageio.mimsave('./metadynamics.gif', images, duration=0.05)
 
     os.system('rm -r images_metaD')

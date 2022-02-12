@@ -7,6 +7,7 @@ import argparse
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 from matplotlib import rc
+from tqdm.auto import tqdm
 
 
 def initialize():
@@ -175,6 +176,7 @@ if __name__ == '__main__':
 
     args = initialize()
 
+    np.random.seed(3)
     os.mkdir('images_multi_metaD')
 
     # Data for plotting free energy surface
@@ -203,7 +205,7 @@ if __name__ == '__main__':
     mu_array = np.zeros([n_trials, N])   # document the center of guassians added
     # mu_array[i] means the positions of all N walkers at step i
 
-    for i in range(n_trials):
+    for i in tqdm(range(n_trials)):
         p_acc = np.zeros(N)
         rx, ry = [], []         # a list for storing the circle data for N walkers
         cx, cy = [], []         # a list for storing the positions of the lable of N circles
@@ -240,7 +242,7 @@ if __name__ == '__main__':
             if x_proposed[j] >= 11.5 or x_proposed[j] < 0:
                 p_acc[j] = 0     # restriced the sampling from 0 to 12
             else:
-                p_acc[j] = np.exp(-delta_y[j])   # beta = 1
+                p_acc[j] = np.exp(-delta_y[j] * 2)   # beta = 1
             r = np.random.rand(1)
 
             if r < p_acc[j]:           # move accept
